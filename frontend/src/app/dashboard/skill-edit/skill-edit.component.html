@@ -1,0 +1,68 @@
+<section class="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+  <header class="mb-8 space-y-2">
+    <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+      {{ id ? 'Edit skill' : 'New skill' }}
+    </h1>
+    <p class="text-sm text-slate-400">
+      {{ id ? 'Update your SKILL.md-style instructions.' : 'Draft an agent skill for Claude, GPT, Gemini, Cursor, or any agent.' }}
+    </p>
+  </header>
+
+  <ps-loading-spinner *ngIf="loading"></ps-loading-spinner>
+
+  <form *ngIf="!loading" class="space-y-5" [formGroup]="form" (ngSubmit)="submit()">
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-slate-300" for="title">Title</label>
+      <input id="title" formControlName="title" required maxlength="120" [class]="ui.input" />
+    </div>
+
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-slate-300" for="description">Description</label>
+      <input id="description" formControlName="description" maxlength="280" placeholder="One-line summary" [class]="ui.input" />
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-3">
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-slate-300" for="agentSlug">Target agent</label>
+        <select id="agentSlug" formControlName="agentSlug" [class]="ui.select">
+          <option *ngFor="let a of agents" [value]="a.id">{{ a.label }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-slate-300" for="visibility">Visibility</label>
+        <select id="visibility" formControlName="visibility" [class]="ui.select">
+          <option *ngFor="let v of visibilities" [value]="v">{{ v }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-slate-300" for="tags">Tags</label>
+        <input id="tags" formControlName="tags" placeholder="comma separated" [class]="ui.input" />
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <label class="text-sm font-medium text-slate-300" for="body">Skill body (markdown)</label>
+        <button type="button" (click)="generateBody()" [class]="ui.btnSecondary">
+          <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+          Generate SKILL template
+        </button>
+      </div>
+      <textarea
+        id="body"
+        rows="16"
+        formControlName="body"
+        required
+        placeholder="# My skill&#10;&#10;Write instructions in SKILL.md format."
+        [class]="ui.textarea"></textarea>
+    </div>
+
+    <div class="sticky bottom-0 -mx-4 flex justify-end gap-3 border-t border-line/80 bg-surface/95 px-4 py-4 backdrop-blur-md sm:-mx-6 sm:px-6">
+      <a routerLink="/skills/mine" [class]="ui.btnSecondary">Cancel</a>
+      <button type="submit" [disabled]="form.invalid || saving" [class]="ui.btnPrimary">
+        <ng-container *ngIf="!saving">{{ id ? 'Save changes' : 'Create skill' }}</ng-container>
+        <ng-container *ngIf="saving">Saving…</ng-container>
+      </button>
+    </div>
+  </form>
+</section>

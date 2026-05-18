@@ -1,0 +1,41 @@
+<div class="grid min-h-screen bg-surface lg:grid-cols-2">
+  <aside
+    class="relative hidden flex-col justify-between overflow-hidden border-r border-line bg-mesh-auth p-10 lg:flex">
+    <div class="relative z-10">
+      <a routerLink="/feed" class="mb-10 inline-flex items-center gap-3">
+        <span
+          class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 text-sm font-bold text-white shadow-glow">
+          PS
+        </span>
+        <span class="text-lg font-semibold text-white">SkillStash</span>
+      </a>
+      <h1 class="max-w-md text-3xl font-semibold leading-tight tracking-tight text-white">
+        Your team agent skills library — searchable, shareable, built to ship.
+      </h1>
+      <ul class="mt-8 space-y-3 text-sm text-slate-300">
+        <li class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-violet-400">check_circle</span>
+          Capture once, reuse everywhere
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-violet-400">check_circle</span>
+          Publish to the community feed
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-violet-400">check_circle</span>
+          Track copies, likes, and followers
+        </li>
+      </ul>
+    </div>
+    <p class="relative z-10 font-mono text-xs text-slate-500">Production-ready · .NET 8 + Angular</p>
+    <div
+      class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-600/20 blur-3xl"
+      aria-hidden="true"></div>
+  </aside>
+
+  <section class="flex items-center justify-center px-4 py-12 sm:px-8">
+    <div class="w-full max-w-md">
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+</div>

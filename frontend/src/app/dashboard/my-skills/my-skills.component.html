@@ -1,0 +1,34 @@
+<section class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:max-w-6xl lg:px-8">
+  <header class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">My skills</h1>
+      <p class="text-sm text-slate-400">Agent skills you've authored (SKILL.md style). Private skills are only visible to you.</p>
+    </div>
+    <button type="button" (click)="create()" [class]="ui.btnPrimary">
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      New skill
+    </button>
+  </header>
+
+  <ps-loading-spinner *ngIf="loading"></ps-loading-spinner>
+
+  <ng-container *ngIf="!loading && data as d">
+    <div *ngIf="d.items.length; else empty" class="flex flex-col gap-6">
+      <ps-skill-card
+        *ngFor="let skill of d.items; trackBy: trackById"
+        [skill]="skill"
+        [showAuthor]="false"
+        [canEdit]="true"
+        (likeToggled)="onLike($event)"
+        (bookmarkToggled)="onBookmark($event)"
+        (copyClicked)="onCopy($event)"
+        (editClicked)="edit($event)">
+      </ps-skill-card>
+    </div>
+    <ng-template #empty>
+      <ps-empty-state icon="inventory_2" title="No skills yet" message="Create your first agent skill to share with the community.">
+        <button type="button" (click)="create()" [class]="ui.btnPrimary">Create skill</button>
+      </ps-empty-state>
+    </ng-template>
+  </ng-container>
+</section>

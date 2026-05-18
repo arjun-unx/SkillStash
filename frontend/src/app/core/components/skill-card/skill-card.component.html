@@ -1,0 +1,176 @@
+<article
+  class="group/card relative overflow-hidden rounded-3xl border border-line/90 bg-surface-elevated/70 shadow-card backdrop-blur-xl transition duration-300 hover:border-line-strong hover:shadow-glow">
+  <div
+    class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-violet-500/[0.04] opacity-0 transition duration-500 group-hover/card:opacity-100"></div>
+
+  <!-- Header -->
+  <header class="relative flex items-start gap-3 px-4 pb-3 pt-4 sm:px-5 sm:pt-5">
+    <a
+      *ngIf="showAuthor"
+      [routerLink]="['/u', skill.authorUserName]"
+      class="flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-cyan-500 text-sm font-semibold text-white ring-2 ring-white/10 transition hover:ring-violet-400/40 h-11 w-11"
+      [attr.aria-label]="skill.authorDisplayName">
+      {{ skill.authorDisplayName.charAt(0) }}
+    </a>
+    <div *ngIf="!showAuthor" class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-overlay ring-2 ring-white/5">
+      <span class="material-symbols-outlined text-[22px] text-slate-400">person</span>
+    </div>
+
+    <div class="min-w-0 flex-1">
+      <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+        <a
+          *ngIf="showAuthor"
+          [routerLink]="['/u', skill.authorUserName]"
+          class="truncate text-sm font-semibold text-white transition hover:text-violet-200 hover:no-underline">
+          {{ skill.authorDisplayName }}
+        </a>
+        <span *ngIf="!showAuthor" class="text-sm font-semibold text-white">You</span>
+        <span class="font-mono text-xs text-slate-500">{{ '@' + skill.authorUserName }}</span>
+      </div>
+      <p *ngIf="skill.authorHeadline" class="truncate text-xs text-slate-400">{{ skill.authorHeadline }}</p>
+      <p *ngIf="skill.updatedAtUtc || skill.createdAtUtc" class="mt-0.5 font-mono text-[11px] text-slate-500">
+        <span *ngIf="skill.updatedAtUtc">Updated {{ skill.updatedAtUtc | psTimeAgo }}</span>
+        <span *ngIf="!skill.updatedAtUtc">{{ skill.createdAtUtc | psTimeAgo }}</span>
+      </p>
+    </div>
+
+    <div class="relative shrink-0">
+      <button
+        type="button"
+        class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-white/5 hover:text-white"
+        (click)="toggleMenu($event)"
+        aria-haspopup="true"
+        [attr.aria-expanded]="menuOpen">
+        <span class="material-symbols-outlined text-[22px]">more_horiz</span>
+      </button>
+      <div
+        *ngIf="menuOpen"
+        class="absolute right-0 z-20 mt-1 w-48 overflow-hidden rounded-xl border border-line-strong bg-surface-overlay/95 py-1 shadow-xl backdrop-blur-md">
+        <a
+          [routerLink]="['/skills', skill.id]"
+          class="flex items-center gap-2 px-3 py-2 text-xs text-slate-200 transition hover:bg-white/5 hover:no-underline">
+          <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+          Open detail
+        </a>
+        <button
+          type="button"
+          class="flex w-full items-center gap-2 px-3 py-2 text-xs text-slate-200 transition hover:bg-white/5"
+          (click)="copy(); menuOpen = false">
+          <span class="material-symbols-outlined text-[18px]">content_copy</span>
+          Copy skill
+        </button>
+        <button
+          *ngIf="canEdit"
+          type="button"
+          class="flex w-full items-center gap-2 px-3 py-2 text-xs text-slate-200 transition hover:bg-white/5"
+          (click)="edit(); menuOpen = false">
+          <span class="material-symbols-outlined text-[18px]">edit</span>
+          Edit
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Title + body -->
+  <div class="relative space-y-3 px-4 sm:px-5">
+    <a
+      [routerLink]="['/skills', skill.id]"
+      class="block text-lg font-semibold leading-snug tracking-tight text-white transition hover:text-violet-200 hover:no-underline sm:text-xl">
+      {{ skill.title }}
+    </a>
+    <span
+      *ngIf="skill.visibility !== 'Public'"
+      class="inline-flex rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-muted">
+      {{ skill.visibility }}
+    </span>
+
+    <div
+      class="max-h-[min(24rem,55vh)] overflow-auto rounded-2xl border border-line/90 bg-surface-raised/90 p-4 shadow-inner ring-1 ring-white/[0.03]">
+      <pre
+        class="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-slate-200 sm:text-sm">{{ skill.body }}</pre>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 text-[11px] font-mono text-slate-500">
+      <span class="rounded-md bg-surface-overlay px-2 py-0.5 text-slate-400">{{ skill.agentSlug }}</span>
+    </div>
+  </div>
+
+  <!-- Action bar -->
+  <div class="relative mt-4 flex items-center gap-1 border-t border-line/60 px-2 py-2 sm:px-4">
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-white/5"
+      [class.text-rose-400]="skill.likedByCurrentUser"
+      [class.text-slate-400]="!skill.likedByCurrentUser"
+      (click)="toggleLike()"
+      aria-label="Like">
+      <span class="material-symbols-outlined text-[24px]" [class.icon-fill]="skill.likedByCurrentUser">favorite</span>
+    </button>
+
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/5 hover:text-white"
+      (click)="comment()"
+      aria-label="Comments">
+      <span class="material-symbols-outlined text-[24px]">chat_bubble</span>
+    </button>
+
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/5 hover:text-white"
+      (click)="share()"
+      aria-label="Share">
+      <span class="material-symbols-outlined text-[24px]">ios_share</span>
+    </button>
+
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-white/5"
+      [class.text-amber-300]="skill.bookmarkedByCurrentUser"
+      [class.text-slate-400]="!skill.bookmarkedByCurrentUser"
+      (click)="toggleBookmark()"
+      aria-label="Bookmark">
+      <span class="material-symbols-outlined text-[24px]" [class.icon-fill]="skill.bookmarkedByCurrentUser">bookmark</span>
+    </button>
+
+    <span class="flex-1"></span>
+    <button
+      type="button"
+      class="inline-flex items-center gap-1.5 rounded-xl border border-line-strong bg-surface-raised/60 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:border-violet-500/40 hover:text-white"
+      (click)="copy()">
+      <span class="material-symbols-outlined text-[18px]">content_copy</span>
+      Copy
+    </button>
+  </div>
+
+  <!-- Meta -->
+  <footer class="relative space-y-3 px-4 pb-5 pt-1 sm:px-5">
+    <p *ngIf="skill.description" class="text-sm leading-relaxed text-slate-400">{{ skill.description }}</p>
+
+    <div *ngIf="skill.tags?.length" class="flex flex-wrap gap-1.5">
+      <span
+        *ngFor="let tag of skill.tags"
+        class="rounded-full bg-slate-800/80 px-2.5 py-0.5 font-mono text-[11px] text-slate-400">
+        #{{ tag }}
+      </span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-slate-500">
+      <span>{{ skill.likeCount }} likes</span>
+      <span *ngIf="skill.commentCount != null">{{ skill.commentCount }} comments</span>
+      <span>{{ skill.bookmarkCount }} saves</span>
+      <span>{{ skill.copyCount }} copies</span>
+    </div>
+
+    <div *ngIf="libraryMode && collections?.length" class="flex flex-wrap items-center gap-2 pt-1">
+      <label class="text-[11px] text-slate-500">Folder</label>
+      <select
+        class="rounded-lg border border-line bg-surface-raised/80 py-1.5 pl-2 pr-8 text-xs text-slate-200 focus:border-violet-500/50 focus:outline-none focus:ring-1 focus:ring-violet-500/30"
+        (change)="onMoveSelect($event)">
+        <option value="" selected disabled>Move to…</option>
+        <option value="">Inbox</option>
+        <option *ngFor="let c of collections" [value]="c.id">{{ c.name }}</option>
+      </select>
+    </div>
+  </footer>
+</article>

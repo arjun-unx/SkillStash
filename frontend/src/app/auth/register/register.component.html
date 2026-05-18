@@ -1,0 +1,44 @@
+<form class="space-y-5" [formGroup]="form" (ngSubmit)="submit()">
+  <header class="space-y-2">
+    <h2 class="text-2xl font-semibold text-white">Create your account</h2>
+    <p class="text-sm text-slate-400">Free — takes about 20 seconds.</p>
+  </header>
+
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-slate-300" for="email">Email</label>
+    <input id="email" type="email" formControlName="email" autocomplete="email" required [class]="ui.input" />
+  </div>
+
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-slate-300" for="userName">Username</label>
+    <input id="userName" formControlName="userName" autocomplete="username" required [class]="ui.input" />
+    <p class="mt-1 text-xs text-slate-500">Letters, numbers, dash, underscore</p>
+  </div>
+
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-slate-300" for="displayName">Display name</label>
+    <input id="displayName" formControlName="displayName" required [class]="ui.input" />
+  </div>
+
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-slate-300" for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      autocomplete="new-password"
+      required
+      [class]="ui.input" />
+    <p class="mt-1 text-xs text-slate-500">Min 8 characters with upper, lower, and a digit</p>
+  </div>
+
+  <button type="submit" [disabled]="form.invalid || loading" [class]="ui.btnPrimary + ' w-full'">
+    <ng-container *ngIf="!loading">Create account</ng-container>
+    <ng-container *ngIf="loading">Creating account…</ng-container>
+  </button>
+
+  <p class="text-center text-sm text-slate-400">
+    Already have one?
+    <a routerLink="/auth/login" class="font-medium text-violet-400 hover:text-violet-300">Sign in</a>
+  </p>
+</form>

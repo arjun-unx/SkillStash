@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply h-full scroll-smooth antialiased;
+  }
+
+  body {
+    @apply min-h-full bg-surface font-sans text-slate-100;
+  }
+
+  ::selection {
+    @apply bg-violet-500/35 text-white;
+  }
+
+  .material-symbols-outlined.icon-fill {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+}

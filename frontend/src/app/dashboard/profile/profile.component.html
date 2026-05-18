@@ -1,0 +1,40 @@
+<section class="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+  <ps-loading-spinner *ngIf="loading"></ps-loading-spinner>
+
+  <ng-container *ngIf="!loading && profile as p">
+    <article class="rounded-2xl border border-line bg-surface-elevated/80 p-6 shadow-card backdrop-blur-sm sm:p-8">
+      <header class="flex flex-col gap-6 sm:flex-row sm:items-start">
+        <span
+          class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-cyan-500 text-xl font-semibold text-white">
+          {{ p.displayName.charAt(0) }}
+        </span>
+        <div class="min-w-0 flex-1 space-y-2">
+          <h1 class="text-2xl font-semibold text-white">{{ p.displayName }}</h1>
+          <p class="font-mono text-sm text-slate-500">{{ '@' + p.userName }}</p>
+          <p *ngIf="p.bio" class="text-sm leading-relaxed text-slate-300">{{ p.bio }}</p>
+        </div>
+        <button
+          type="button"
+          (click)="toggleFollow()"
+          [class]="p.isFollowedByCurrentUser ? ui.btnSecondary : ui.btnPrimary">
+          {{ p.isFollowedByCurrentUser ? 'Following' : 'Follow' }}
+        </button>
+      </header>
+
+      <div class="mt-8 grid grid-cols-3 gap-6 border-t border-line/80 pt-6">
+        <div class="text-center sm:text-left">
+          <div class="text-2xl font-semibold text-white">{{ p.publicSkillsCount }}</div>
+          <div class="text-sm text-slate-400">skills</div>
+        </div>
+        <div class="text-center sm:text-left">
+          <div class="text-2xl font-semibold text-white">{{ p.followersCount }}</div>
+          <div class="text-sm text-slate-400">followers</div>
+        </div>
+        <div class="text-center sm:text-left">
+          <div class="text-2xl font-semibold text-white">{{ p.followingCount }}</div>
+          <div class="text-sm text-slate-400">following</div>
+        </div>
+      </div>
+    </article>
+  </ng-container>
+</section>

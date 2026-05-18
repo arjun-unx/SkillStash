@@ -1,0 +1,143 @@
+<section class="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col xl:max-w-6xl">
+  <!-- Stays visible while the feed scrolls (main is the scroll container) -->
+  <header
+    class="sticky top-0 z-20 shrink-0 border-b border-line/80 bg-surface/95 px-4 pb-4 pt-5 backdrop-blur-xl sm:px-6 lg:px-8">
+    <div class="space-y-4">
+      <div class="space-y-1">
+        <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Discover</h1>
+        <p class="text-sm text-slate-400">Follow creators or explore the latest public agent skills from the community.</p>
+      </div>
+
+      <div class="flex gap-1 rounded-2xl border border-line/80 bg-surface-elevated/60 p-1 backdrop-blur-md">
+        <button
+          type="button"
+          [class]="
+            tab === 'explore'
+              ? 'flex-1 rounded-xl bg-surface-overlay py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-white/10'
+              : 'flex-1 rounded-xl py-2.5 text-sm font-medium text-slate-400 transition hover:text-white'
+          "
+          (click)="setTab('explore')">
+          Explore
+        </button>
+        <button
+          type="button"
+          [class]="
+            tab === 'following'
+              ? 'flex-1 rounded-xl bg-surface-overlay py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-white/10'
+              : 'flex-1 rounded-xl py-2.5 text-sm font-medium text-slate-400 transition hover:text-white'
+          "
+          (click)="setTab('following')">
+          Following
+        </button>
+      </div>
+
+      <div *ngIf="tab === 'explore'" class="relative">
+        <span
+          class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-500">
+          search
+        </span>
+        <input
+          type="search"
+          [formControl]="searchCtrl"
+          autocomplete="off"
+          placeholder="Search skills…"
+          class="block w-full rounded-xl border border-line bg-surface-raised/80 py-2.5 pl-10 pr-4 text-sm text-slate-100 placeholder:text-slate-500 focus:border-violet-500/70 focus:outline-none focus:ring-2 focus:ring-violet-500/25" />
+      </div>
+
+      <div *ngIf="tab === 'explore'" class="-mx-1">
+        <div class="flex gap-2 overflow-x-auto px-1 pb-1" style="-webkit-overflow-scrolling: touch">
+          <button
+            type="button"
+            (click)="selectTag(null)"
+            [class]="
+              !selectedTag
+                ? 'shrink-0 rounded-full bg-violet-500/25 px-3.5 py-1.5 text-xs font-semibold text-violet-100 ring-1 ring-violet-400/40'
+                : 'shrink-0 rounded-full border border-line bg-surface-raised/70 px-3.5 py-1.5 text-xs font-medium text-slate-400 transition hover:border-line-strong hover:text-white'
+            ">
+            All
+          </button>
+          <button
+            *ngFor="let tag of exploreTags"
+            type="button"
+            (click)="selectTag(tag)"
+            [class]="
+              isTagOn(tag)
+                ? 'shrink-0 rounded-full bg-violet-500/25 px-3.5 py-1.5 text-xs font-semibold text-violet-100 ring-1 ring-violet-400/40'
+                : 'shrink-0 rounded-full border border-line bg-surface-raised/70 px-3.5 py-1.5 text-xs font-medium text-slate-400 transition hover:border-line-strong hover:text-white'
+            ">
+            {{ tag }}
+          </button>
+        </div>
+        <p class="mt-1 px-1 text-[11px] text-slate-600">One category at a time — tap again to clear.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <ng-container *ngIf="tab === 'following' && !auth.isAuthenticated">
+      <ps-empty-state
+        icon="person_add"
+        title="Sign in to see your Following feed"
+        message="Follow creators from their profile, then catch every public skill here in one place.">
+        <a
+          routerLink="/auth/login"
+          [queryParams]="{ redirect: '/feed' }"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500">
+          Log in
+        </a>
+      </ps-empty-state>
+    </ng-container>
+
+    <ng-container *ngIf="tab === 'explore' || auth.isAuthenticated">
+      <div *ngIf="loading" class="space-y-5">
+        <div
+          *ngFor="let _ of [1, 2, 3]"
+          class="animate-pulse space-y-3 rounded-3xl border border-line/60 bg-surface-elevated/40 p-5">
+          <div class="flex gap-3">
+            <div class="h-11 w-11 rounded-full bg-slate-800"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-3 w-1/3 rounded bg-slate-800"></div>
+              <div class="h-3 w-1/4 rounded bg-slate-800"></div>
+            </div>
+          </div>
+          <div class="h-36 rounded-2xl bg-slate-800/80"></div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!loading">
+        <ng-container *ngIf="items.length; else empty">
+          <div class="flex flex-col gap-6 xl:gap-7">
+            <ps-skill-card
+              *ngFor="let skill of items; trackBy: trackById"
+              [skill]="skill"
+              (likeToggled)="onLikeToggled($event)"
+              (bookmarkToggled)="onBookmarkToggled($event)"
+              (copyClicked)="onCopy($event)"
+              (commentClicked)="onComment($event)"
+              (shareClicked)="onShare($event)">
+            </ps-skill-card>
+          </div>
+
+          <div #sentinel class="flex h-14 w-full items-center justify-center py-8" aria-hidden="true">
+            <span *ngIf="loadingMore" class="font-mono text-xs text-slate-500">Loading more…</span>
+            <span *ngIf="!hasNext && !loadingMore && items.length" class="font-mono text-xs text-slate-600">
+              {{ totalCount }} skills · end of feed
+            </span>
+          </div>
+        </ng-container>
+
+        <ng-template #empty>
+          <ps-empty-state
+            [icon]="tab === 'following' ? 'rss_feed' : 'travel_explore'"
+            [title]="tab === 'following' ? 'No skills from people you follow yet' : 'Nothing matches yet'"
+            [message]="
+              tab === 'following'
+                ? 'Discover authors on Explore, open a profile, and tap Follow to build your timeline.'
+                : 'Try another search, a different tag, or follow creators for a personalized Following tab.'
+            ">
+          </ps-empty-state>
+        </ng-template>
+      </ng-container>
+    </ng-container>
+  </div>
+</section>

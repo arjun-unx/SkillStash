@@ -1,0 +1,43 @@
+<aside class="flex h-full flex-col px-4 py-6">
+  <a routerLink="/feed" class="mb-8 flex items-center gap-3 rounded-xl px-2 py-1 transition hover:bg-white/5">
+    <span
+      class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 text-sm font-bold text-white shadow-glow">
+      PS
+    </span>
+    <div>
+      <div class="text-sm font-semibold text-white">SkillStash</div>
+      <div class="text-xs text-slate-500">Share. Save. Iterate.</div>
+    </div>
+  </a>
+
+  <nav class="flex flex-1 flex-col gap-1" aria-label="Main">
+    <ng-container *ngIf="user$ | async as user; else anonNav">
+      <ng-container *ngFor="let item of items">
+        <a
+          *ngIf="isVisible(item, user)"
+          [routerLink]="item.link"
+          routerLinkActive="bg-violet-500/15 text-white ring-1 ring-inset ring-violet-500/25"
+          [routerLinkActiveOptions]="{ exact: item.exact === true }"
+          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition hover:bg-white/5 hover:text-white">
+          <span class="material-symbols-outlined text-[20px]">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      </ng-container>
+    </ng-container>
+    <ng-template #anonNav>
+      <ng-container *ngFor="let item of items">
+        <a
+          *ngIf="isVisible(item, null)"
+          [routerLink]="item.link"
+          routerLinkActive="bg-violet-500/15 text-white ring-1 ring-inset ring-violet-500/25"
+          [routerLinkActiveOptions]="{ exact: item.exact === true }"
+          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition hover:bg-white/5 hover:text-white">
+          <span class="material-symbols-outlined text-[20px]">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      </ng-container>
+    </ng-template>
+  </nav>
+
+  <p class="mt-auto px-2 font-mono text-[11px] text-slate-600">v1.0 · Tailwind</p>
+</aside>

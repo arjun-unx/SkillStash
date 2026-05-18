@@ -1,0 +1,9 @@
+<div class="flex h-screen min-h-screen overflow-hidden bg-surface bg-mesh-app">
+  <ps-sidebar class="hidden w-64 shrink-0 border-r border-line bg-surface-elevated/90 backdrop-blur-xl lg:block"></ps-sidebar>
+  <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+    <ps-header></ps-header>
+    <main class="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

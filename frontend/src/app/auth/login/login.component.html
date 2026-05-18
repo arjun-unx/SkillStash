@@ -1,0 +1,40 @@
+<form class="space-y-6" [formGroup]="form" (ngSubmit)="submit()">
+  <header class="space-y-2 lg:hidden">
+    <span
+      class="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 text-sm font-bold text-white">
+      PS
+    </span>
+    <h2 class="text-2xl font-semibold text-white">Sign in</h2>
+    <p class="text-sm text-slate-400">Welcome back. Pick up where you left off.</p>
+  </header>
+  <header class="hidden space-y-2 lg:block">
+    <h2 class="text-2xl font-semibold text-white">Sign in</h2>
+    <p class="text-sm text-slate-400">Welcome back. Pick up where you left off.</p>
+  </header>
+
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-slate-300" for="email">Email</label>
+    <input id="email" type="email" formControlName="email" autocomplete="email" required [class]="ui.input" />
+  </div>
+
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-slate-300" for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      autocomplete="current-password"
+      required
+      [class]="ui.input" />
+  </div>
+
+  <button type="submit" [disabled]="form.invalid || loading" [class]="ui.btnPrimary + ' w-full'">
+    <ng-container *ngIf="!loading">Sign in</ng-container>
+    <ng-container *ngIf="loading">Signing you in…</ng-container>
+  </button>
+
+  <p class="text-center text-sm text-slate-400">
+    No account yet?
+    <a routerLink="/auth/register" class="font-medium text-violet-400 hover:text-violet-300">Create one</a>
+  </p>
+</form>

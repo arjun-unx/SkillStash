@@ -1,0 +1,67 @@
+name: promptstash
+
+# PromptStash modular monolith:
+#   postgres -> the database
+#   api      -> the single .NET 8 backend (controllers + background consumer hosted in-process)
+#   web      -> the Angular SPA served by nginx, proxying /api to the api container
+#
+# For production scale-out you can deploy multiple `api` replicas; one of them can be
+# configured with `ASPNETCORE_URLS=` (no HTTP) to act as a dedicated background worker.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: promptstash-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: promptstash
+      POSTGRES_PASSWORD: promptstash
+      POSTGRES_DB: promptstash
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U promptstash -d promptstash"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/src/PromptStash.Api/Dockerfile
+    container_name: promptstash-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=promptstash;Username=promptstash;Password=promptstash"
+      Jwt__Secret: "REPLACE_WITH_AT_LEAST_32_CHARACTERS_LONG_SECRET_FOR_LOCAL_DEV"
+      ServiceBus__UseAzure: "false"
+      Worker__HostInProcess: "true"
+      Email__LogOnly: "true"
+      Cors__AllowedOrigins__0: "http://localhost:4200"
+      Cors__AllowedOrigins__1: "http://localhost"
+    ports:
+      - "5080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health/live"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: promptstash-web
+    depends_on:
+      - api
+    ports:
+      - "4200:80"
+
+volumes:
+  postgres-data:
