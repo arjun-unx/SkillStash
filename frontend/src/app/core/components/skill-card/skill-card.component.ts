@@ -47,27 +47,38 @@ export class SkillCardComponent {
     this.menuOpen = !this.menuOpen;
   }
 
-  toggleLike(): void {
+  private stopClick(ev?: Event): void {
+    ev?.stopPropagation();
+    ev?.preventDefault();
+  }
+
+  toggleLike(ev: Event): void {
+    this.stopClick(ev);
     this.likeToggled.emit(this.skill);
   }
 
-  toggleBookmark(): void {
+  toggleBookmark(ev: Event): void {
+    this.stopClick(ev);
     this.bookmarkToggled.emit(this.skill);
   }
 
-  copy(): void {
+  copy(ev?: Event): void {
+    this.stopClick(ev);
     this.copyClicked.emit(this.skill);
   }
 
-  comment(): void {
+  comment(ev: Event): void {
+    this.stopClick(ev);
     this.commentClicked.emit(this.skill);
   }
 
-  share(): void {
+  share(ev: Event): void {
+    this.stopClick(ev);
     this.shareClicked.emit(this.skill);
   }
 
-  edit(): void {
+  edit(ev?: Event): void {
+    this.stopClick(ev);
     this.editClicked.emit(this.skill);
   }
 

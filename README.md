@@ -75,21 +75,15 @@ dotnet user-secrets set "Trending:GitHubToken" "ghp_YOUR_TOKEN" --project backen
 ## Project layout
 
 ```
-backend/
-  src/PromptStash.Api/     # API (Controllers, Features, Services, Data)
-  tests/PromptStash.Tests/
-frontend/
-  src/app/                 # Angular (core, auth, dashboard)
-docs/DESIGN.md             # Architecture notes
-docker-compose.yml
-.github/workflows/ci.yml
-```
+backend/src/PromptStash.Api/
+  Controllers/             # HTTP endpoints (flat)
+  Features/                # MediatR handlers by domain (5 files)
+  Services/                # Repositories, trending sync, bus, auth (flat)
+  Data/                    # DbContext, entities, EF configs (flat)
+  Common/                  # DTOs, middleware, behaviors, settings (flat)
+  Program.cs
 
-## Tests
-
-```bash
-dotnet test backend/PromptStash.sln
-cd frontend && npm test
+frontend/src/app/          # Angular (core, auth, dashboard)
 ```
 
 ## License

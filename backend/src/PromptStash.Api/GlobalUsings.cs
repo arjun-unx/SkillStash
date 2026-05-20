@@ -1,0 +1,10 @@
+global using PromptStash.Api.Services;
+global using PromptStash.Api.Features.Auth;
+global using PromptStash.Api.Features.Library;
+global using PromptStash.Api.Features.Skills;
+global using PromptStash.Api.Features.Trending;
+global using PromptStash.Api.Features.Users;
+global using PromptStash.Api.Services.Auth;
+global using PromptStash.Api.Services.Messaging;
+global using PromptStash.Api.Services.Repositories;
+global using PromptStash.Api.Services.Trending;

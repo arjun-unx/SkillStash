@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 import { API_ROUTES } from '@core/models/app.constants';
 import { BookmarkCollectionDto, PaginatedList, SkillDto } from '@core/models/skill.model';
+import { TrendingSkillDto } from '@core/models/trending.model';
 
 @Injectable({ providedIn: 'root' })
 export class LibraryService {
@@ -27,6 +28,11 @@ export class LibraryService {
     let params = new HttpParams().set('page', page).set('pageSize', pageSize);
     if (collectionId) params = params.set('collectionId', collectionId);
     return this.http.get<PaginatedList<SkillDto>>(`${this.base}/bookmarks`, { params });
+  }
+
+  trendingBookmarks(page = 1, pageSize = 60): Observable<PaginatedList<TrendingSkillDto>> {
+    const params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    return this.http.get<PaginatedList<TrendingSkillDto>>(`${this.base}/trending-bookmarks`, { params });
   }
 
   moveBookmark(skillId: string, collectionId: string | null): Observable<void> {

@@ -14,8 +14,10 @@ using PromptStash.Api.Common.Behaviors;
 using PromptStash.Api.Common.Settings;
 using PromptStash.Api.Data;
 using PromptStash.Api.Services;
+using PromptStash.Api.Services.Auth;
+using PromptStash.Api.Services.Messaging;
+using PromptStash.Api.Services.Repositories;
 using PromptStash.Api.Services.Trending;
-using PromptStash.Api.Services.Trending.Fetchers;
 
 namespace PromptStash.Api.Common.Extensions;
 

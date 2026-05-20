@@ -1,7 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
+import { normalizeToggleBookmark } from '@core/utils/api-normalize';
 import { API_ROUTES } from '@core/models/app.constants';
 import {
   BookmarkCollectionDto,
@@ -73,8 +75,10 @@ export class SkillService {
     return this.http.post<ToggleLikeResponse>(`${this.base}/${id}/like`, {});
   }
 
-  toggleBookmark(id: string, collectionId?: string | null): Observable<ToggleBookmarkResponse> {
-    return this.http.post<ToggleBookmarkResponse>(`${this.base}/${id}/bookmark`, { collectionId });
+  setBookmark(id: string, bookmarked: boolean, collectionId?: string | null): Observable<ToggleBookmarkResponse> {
+    return this.http
+      .post<unknown>(`${this.base}/${id}/bookmark`, { bookmarked, collectionId: collectionId ?? null })
+      .pipe(map(normalizeToggleBookmark));
   }
 
   trackCopy(id: string): Observable<TrackCopyResponse> {

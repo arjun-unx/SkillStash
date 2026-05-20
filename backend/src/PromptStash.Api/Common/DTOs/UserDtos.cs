@@ -12,7 +12,3 @@ public sealed record UserProfileDto(
     bool IsFollowedByCurrentUser);
 
 public sealed record ToggleFollowResponse(bool IsFollowing, int FollowersCount);
-
-public sealed record ToggleLikeResponse(bool Liked, int LikeCount);
-
-public sealed record TrackCopyResponse(int CopyCount);

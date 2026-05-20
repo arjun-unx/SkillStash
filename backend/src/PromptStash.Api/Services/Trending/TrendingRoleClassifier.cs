@@ -49,7 +49,7 @@ public static class TrendingRoleClassifier
     {
         var t = body.Trim().Replace("\r\n", "\n");
         if (t.Length <= max) return t;
-        return t[..max].TrimEnd() + "…";
+        return t[..max].TrimEnd() + "â€¦";
     }
 
     public static string StableKey(string sourceName, string uniquePart)

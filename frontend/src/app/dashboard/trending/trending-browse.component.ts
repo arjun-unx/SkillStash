@@ -13,7 +13,9 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
+import { CuratedLocalService } from '@core/services/curated-local.service';
 import { TrendingService } from '@core/services/trending.service';
+import { applyTrendingBookmarkToggle } from '@core/utils/bookmark-actions';
 import {
   TrendingSkillDto,
   TrendingProviderDto,
@@ -60,11 +62,13 @@ export class TrendingBrowseComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('sentinel', { read: ElementRef }) sentinel?: ElementRef<HTMLElement>;
   private observer?: IntersectionObserver;
   private loadToken = 0;
+  private readonly bookmarkInFlight = new Set<string>();
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly trending: TrendingService,
+    private readonly curated: CuratedLocalService,
     readonly auth: AuthService,
     private readonly notify: NotificationService,
     private readonly cdr: ChangeDetectorRef
@@ -213,15 +217,45 @@ export class TrendingBrowseComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   toggleBookmark(p: TrendingSkillDto): void {
+    if (this.bookmarkInFlight.has(p.id)) return;
+    const wantBookmarked = !p.bookmarkedByCurrentUser;
+
     if (!this.auth.isAuthenticated) {
-      this.router.navigate(['/auth/login'], { queryParams: { redirect: this.router.url } });
+      const saved = this.curated.toggle(this.toCuratedSnapshot(p));
+      applyTrendingBookmarkToggle(p, saved, p.saveCount);
+      this.cdr.markForCheck();
+      this.notify.success(saved ? 'Saved on this device' : 'Removed from device saves');
       return;
     }
-    this.trending.toggleBookmark(p.id).subscribe(res => {
-      p.bookmarkedByCurrentUser = res.bookmarked;
-      p.saveCount = res.saveCount;
-      this.cdr.markForCheck();
+
+    this.bookmarkInFlight.add(p.id);
+    this.trending.setBookmark(p.id, wantBookmarked).subscribe({
+      next: res => {
+        applyTrendingBookmarkToggle(p, res.bookmarked, res.saveCount);
+        if (res.bookmarked) this.curated.save(this.toCuratedSnapshot(p));
+        else this.curated.remove(p.id);
+        this.bookmarkInFlight.delete(p.id);
+        this.notify.success(res.bookmarked ? 'Saved to library' : 'Removed from library');
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.bookmarkInFlight.delete(p.id);
+        this.notify.error('Could not update bookmark');
+      }
     });
+  }
+
+  private toCuratedSnapshot(p: TrendingSkillDto) {
+    return {
+      id: p.id,
+      title: p.title,
+      snippet: p.snippet,
+      body: p.body,
+      providerSlug: p.providerSlug,
+      providerLabel: p.providerName,
+      role: p.roleCategory,
+      tags: p.tags
+    };
   }
 
   async share(p: TrendingSkillDto): Promise<void> {

@@ -1,0 +1,20 @@
+<div
+  class="pointer-events-none fixed inset-x-0 top-0 z-[100] flex flex-col items-center gap-2 p-4 sm:items-end sm:p-6"
+  aria-live="polite"
+  aria-atomic="true">
+  <div
+    *ngFor="let toast of toasts; trackBy: trackById"
+    [class]="toastClasses(toast.type)"
+    role="status">
+    <span class="material-symbols-outlined shrink-0 text-[20px] leading-none">
+      {{ toast.type === 'success' ? 'check_circle' : toast.type === 'error' ? 'error' : 'info' }}
+    </span>
+    <p class="flex-1 leading-snug">{{ toast.message }}</p>
+    <button
+      type="button"
+      class="shrink-0 rounded-lg p-1 opacity-70 transition hover:bg-white/10 hover:opacity-100"
+      (click)="dismiss(toast.id)"
+      aria-label="Dismiss">
+      <span class="material-symbols-outlined text-[18px]">close</span>
+    </button>
+  </div>

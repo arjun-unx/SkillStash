@@ -64,17 +64,6 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": { "buildTarget": "skillstash-web:build" }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "css",
-            "assets": ["src/favicon.ico"],
-            "styles": ["src/styles.css"],
-            "scripts": []
-          }
         }
       }
     }

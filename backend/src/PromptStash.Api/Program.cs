@@ -17,7 +17,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console(outputTemplate:
         "[{Timestamp:HH:mm:ss} {Level:u3}] {Application} {CorrelationId} {Message:lj}{NewLine}{Exception}"));
 
-// Single composition root that wires Database, MediatR + behaviors, FluentValidation,
+// Single composition root that wires Database, MediatR pipeline, FluentValidation,
 // JWT auth, app services and API infrastructure (Controllers, Swagger, CORS, RateLimiter, Health).
 builder.Services.AddPromptStash(builder.Configuration);
 

@@ -4,6 +4,7 @@ import { SkillCommentDto, SkillDto } from '@core/models/skill.model';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { SkillService } from '@core/services/skill.service';
+import { applySkillBookmarkToggle } from '@core/utils/bookmark-actions';
 import { UI } from '@core/ui/ui-classes';
 
 @Component({
@@ -87,10 +88,12 @@ export class SkillDetailComponent implements OnInit {
       this.router.navigate(['/auth/login']);
       return;
     }
-    this.skills.toggleBookmark(p.id).subscribe(res => {
-      p.bookmarkedByCurrentUser = res.bookmarked;
-      p.bookmarkCount = res.bookmarkCount;
-      this.cdr.markForCheck();
+    this.skills.setBookmark(p.id, !p.bookmarkedByCurrentUser).subscribe({
+      next: res => {
+        applySkillBookmarkToggle(p, res.bookmarked, res.bookmarkCount);
+        this.cdr.markForCheck();
+      },
+      error: () => this.notify.error('Could not update bookmark')
     });
   }
 

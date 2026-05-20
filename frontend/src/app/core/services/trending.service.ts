@@ -1,7 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
+import { normalizeToggleTrendingBookmark } from '@core/utils/api-normalize';
 import {
   ToggleTrendingBookmarkResponse,
   TrendingSkillDto,
@@ -46,8 +48,10 @@ export class TrendingService {
     return this.http.get<TrendingSkillDto>(`${this.base}/skills/${id}`);
   }
 
-  toggleBookmark(id: string): Observable<ToggleTrendingBookmarkResponse> {
-    return this.http.post<ToggleTrendingBookmarkResponse>(`${this.base}/skills/${id}/bookmark`, {});
+  setBookmark(id: string, bookmarked: boolean): Observable<ToggleTrendingBookmarkResponse> {
+    return this.http
+      .post<unknown>(`${this.base}/skills/${id}/bookmark`, { bookmarked })
+      .pipe(map(normalizeToggleTrendingBookmark));
   }
 
   trackUse(id: string): Observable<{ useCount: number }> {

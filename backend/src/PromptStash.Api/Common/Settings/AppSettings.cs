@@ -29,13 +29,11 @@ public sealed class EmailOptions
     public string? Password { get; set; }
     public string FromAddress { get; set; } = "no-reply@promptstash.local";
     public string FromName { get; set; } = "PromptStash";
-    /// <summary>When true, the SMTP service logs the email body instead of sending it.</summary>
     public bool LogOnly { get; set; } = true;
 }
 
 public sealed class WorkerOptions
 {
     public const string SectionName = "Worker";
-    /// <summary>When true, the integration event consumer runs in-process inside the API.</summary>
     public bool HostInProcess { get; set; } = true;
 }

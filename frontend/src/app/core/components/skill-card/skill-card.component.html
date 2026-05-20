@@ -102,7 +102,7 @@
       class="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-white/5"
       [class.text-rose-400]="skill.likedByCurrentUser"
       [class.text-slate-400]="!skill.likedByCurrentUser"
-      (click)="toggleLike()"
+      (click)="toggleLike($event)"
       aria-label="Like">
       <span class="material-symbols-outlined text-[24px]" [class.icon-fill]="skill.likedByCurrentUser">favorite</span>
     </button>
@@ -110,7 +110,7 @@
     <button
       type="button"
       class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/5 hover:text-white"
-      (click)="comment()"
+      (click)="comment($event)"
       aria-label="Comments">
       <span class="material-symbols-outlined text-[24px]">chat_bubble</span>
     </button>
@@ -118,7 +118,7 @@
     <button
       type="button"
       class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/5 hover:text-white"
-      (click)="share()"
+      (click)="share($event)"
       aria-label="Share">
       <span class="material-symbols-outlined text-[24px]">ios_share</span>
     </button>
@@ -128,7 +128,7 @@
       class="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-white/5"
       [class.text-amber-300]="skill.bookmarkedByCurrentUser"
       [class.text-slate-400]="!skill.bookmarkedByCurrentUser"
-      (click)="toggleBookmark()"
+      (click)="toggleBookmark($event)"
       aria-label="Bookmark">
       <span class="material-symbols-outlined text-[24px]" [class.icon-fill]="skill.bookmarkedByCurrentUser">bookmark</span>
     </button>
@@ -137,7 +137,7 @@
     <button
       type="button"
       class="inline-flex items-center gap-1.5 rounded-xl border border-line-strong bg-surface-raised/60 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:border-violet-500/40 hover:text-white"
-      (click)="copy()">
+      (click)="copy($event)">
       <span class="material-symbols-outlined text-[18px]">content_copy</span>
       Copy
     </button>

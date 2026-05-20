@@ -14,4 +14,28 @@ export class TrendingSkillCardComponent {
   @Output() bookmarkToggled = new EventEmitter<TrendingSkillDto>();
   @Output() shareClicked = new EventEmitter<TrendingSkillDto>();
   @Output() useClicked = new EventEmitter<TrendingSkillDto>();
+
+  onBookmarkClick(ev: Event): void {
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.bookmarkToggled.emit(this.skill);
+  }
+
+  onCopyClick(ev: Event): void {
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.copyClicked.emit(this.skill);
+  }
+
+  onShareClick(ev: Event): void {
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.shareClicked.emit(this.skill);
+  }
+
+  onUseClick(ev: Event): void {
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.useClicked.emit(this.skill);
+  }
 }

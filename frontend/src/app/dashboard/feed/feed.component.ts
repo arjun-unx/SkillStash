@@ -16,6 +16,7 @@ import { PaginatedList, SkillDto } from '@core/models/skill.model';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { SkillService } from '@core/services/skill.service';
+import { applySkillBookmarkToggle } from '@core/utils/bookmark-actions';
 
 type DiscoverTab = 'following' | 'explore';
 
@@ -44,6 +45,7 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('sentinel', { read: ElementRef }) sentinel?: ElementRef<HTMLElement>;
   private observer?: IntersectionObserver;
   private loadToken = 0;
+  private readonly bookmarkInFlight = new Set<string>();
 
   constructor(
     readonly auth: AuthService,
@@ -196,10 +198,21 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['/auth/login'], { queryParams: { redirect: '/feed' } });
       return;
     }
-    this.skills.toggleBookmark(p.id).subscribe(res => {
-      p.bookmarkedByCurrentUser = res.bookmarked;
-      p.bookmarkCount = res.bookmarkCount;
-      this.cdr.markForCheck();
+    if (this.bookmarkInFlight.has(p.id)) return;
+
+    const wantBookmarked = !p.bookmarkedByCurrentUser;
+    this.bookmarkInFlight.add(p.id);
+    this.skills.setBookmark(p.id, wantBookmarked).subscribe({
+      next: res => {
+        applySkillBookmarkToggle(p, res.bookmarked, res.bookmarkCount);
+        this.bookmarkInFlight.delete(p.id);
+        this.notify.success(res.bookmarked ? 'Saved to library' : 'Removed from library');
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.bookmarkInFlight.delete(p.id);
+        this.notify.error('Could not update bookmark');
+      }
     });
   }
 
